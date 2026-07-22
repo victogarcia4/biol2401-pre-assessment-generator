@@ -42,7 +42,7 @@ export const CHAPTERS: ChapterMeta[] = [
     examName: 'Lecture Exam 1',
     questionCount: 15,
     csvFileName: 'Chapter_04_MCQs.csv',
-    hasData: false,
+    hasData: true,
     subjects: ['C - Chemistry & Cell Biology']
   },
   {
