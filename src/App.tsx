@@ -68,7 +68,7 @@ function MainAppContent() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* Chapter Overview Banner */}
-        <div className="glass-card p-6 rounded-2xl border border-white/10 light:border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-[#0d1527] to-[#0f1b33] light:from-slate-100 light:to-slate-200">
+        <div className="glass-card p-6 rounded-2xl border border-white/10 light:border-slate-300 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1 max-w-3xl">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 light:text-cyan-800 px-2 py-0.5 rounded uppercase">
