@@ -9,6 +9,7 @@ import { CHAPTER_1_MCQS } from './data/chapter1';
 import { CHAPTER_2_MCQS } from './data/chapter2';
 import { CHAPTER_3_MCQS } from './data/chapter3';
 import { CHAPTER_4_MCQS } from './data/chapter4';
+import { CHAPTER_5_MCQS } from './data/chapter5';
 import { ChapterMeta, MCQItem } from './types';
 import { Heart, Sparkles, BookOpen, Layers } from 'lucide-react';
 
@@ -21,7 +22,8 @@ export default function App() {
     selectedChapter.id === 1 ? CHAPTER_1_MCQS :
     selectedChapter.id === 2 ? CHAPTER_2_MCQS :
     selectedChapter.id === 3 ? CHAPTER_3_MCQS :
-    selectedChapter.id === 4 ? CHAPTER_4_MCQS : [];
+    selectedChapter.id === 4 ? CHAPTER_4_MCQS :
+    selectedChapter.id === 5 ? CHAPTER_5_MCQS : [];
 
   return (
     <div className="min-h-screen bg-[#080c14] text-zinc-100 flex flex-col font-sans selection:bg-[#00f0ff]/30 selection:text-white">
