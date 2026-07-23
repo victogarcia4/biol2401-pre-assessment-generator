@@ -97,7 +97,7 @@ export const CHAPTERS: ChapterMeta[] = [
     examName: 'Lecture Exam 3',
     questionCount: 15,
     csvFileName: 'Chapter_09_MCQs.csv',
-    hasData: false,
+    hasData: true,
     subjects: ['F - Muscular System & Contraction']
   },
   {
