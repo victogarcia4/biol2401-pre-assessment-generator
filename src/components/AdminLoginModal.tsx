@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { Lock, X, KeyRound, ShieldAlert, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -32,9 +33,9 @@ export const AdminLoginModal: React.FC = () => {
     setPassword('');
   };
 
-  return (
+  const modalContent = (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm p-4 sm:p-6 flex items-start sm:items-center justify-center">
+      <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/70 backdrop-blur-sm p-4 sm:p-6 flex items-start sm:items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -129,4 +130,6 @@ export const AdminLoginModal: React.FC = () => {
       </div>
     </AnimatePresence>
   );
+
+  return createPortal(modalContent, document.body);
 };

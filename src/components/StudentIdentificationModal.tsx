@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { User, AlertCircle, ArrowRight, Key, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChapterMeta } from '../types';
@@ -62,9 +63,9 @@ export const StudentIdentificationModal: React.FC<StudentIdentificationModalProp
     }
   };
 
-  return (
+  const modalContent = (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md p-4 sm:p-6 flex items-start sm:items-center justify-center">
+      <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/80 backdrop-blur-md p-4 sm:p-6 flex items-start sm:items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -74,7 +75,7 @@ export const StudentIdentificationModal: React.FC<StudentIdentificationModalProp
           {canClose && onClose && (
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-white p-1 rounded-lg transition cursor-pointer"
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white light:hover:text-slate-900 p-1 rounded-lg transition cursor-pointer"
               title="Close Modal"
             >
               ✕
@@ -196,4 +197,6 @@ export const StudentIdentificationModal: React.FC<StudentIdentificationModalProp
       </div>
     </AnimatePresence>
   );
+
+  return createPortal(modalContent, document.body);
 };
