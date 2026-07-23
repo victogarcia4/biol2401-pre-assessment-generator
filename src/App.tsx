@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { PreAssessmentQuiz } from './components/PreAssessmentQuiz';
 import { QuestionBankTable } from './components/QuestionBankTable';
 import { SLOAnalytics } from './components/SLOAnalytics';
 import { CSVExportModal } from './components/CSVExportModal';
+import { AdminLoginModal } from './components/AdminLoginModal';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CHAPTERS } from './data/chapters';
 import { CHAPTER_1_MCQS } from './data/chapter1';
 import { CHAPTER_2_MCQS } from './data/chapter2';
@@ -18,11 +20,18 @@ import { CHAPTER_10_MCQS } from './data/chapter10';
 import { CHAPTER_11_MCQS } from './data/chapter11';
 import { CHAPTER_12_MCQS } from './data/chapter12';
 import { ChapterMeta, MCQItem } from './types';
-import { Heart, Sparkles, BookOpen, Layers } from 'lucide-react';
 
-export default function App() {
+function MainAppContent() {
+  const { isAdmin } = useAuth();
   const [selectedChapter, setSelectedChapter] = useState<ChapterMeta>(CHAPTERS[0]);
   const [activeTab, setActiveTab] = useState<'quiz' | 'bank' | 'analytics' | 'export'>('quiz');
+
+  // Enforce student restrictions: non-admin users can ONLY view the quiz tab
+  useEffect(() => {
+    if (!isAdmin && activeTab !== 'quiz') {
+      setActiveTab('quiz');
+    }
+  }, [isAdmin, activeTab]);
 
   // Dynamically load MCQs based on selected chapter
   const currentMCQs: MCQItem[] = 
@@ -42,6 +51,9 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#080c14] text-zinc-100 flex flex-col font-sans selection:bg-[#00f0ff]/30 selection:text-white">
       
+      {/* Admin Login Modal */}
+      <AdminLoginModal />
+
       {/* Dynamic Header & Navigation */}
       <Header
         selectedChapter={selectedChapter}
@@ -87,15 +99,15 @@ export default function App() {
           <PreAssessmentQuiz chapter={selectedChapter} mcqs={currentMCQs} />
         )}
 
-        {activeTab === 'bank' && (
+        {isAdmin && activeTab === 'bank' && (
           <QuestionBankTable chapter={selectedChapter} mcqs={currentMCQs} />
         )}
 
-        {activeTab === 'analytics' && (
+        {isAdmin && activeTab === 'analytics' && (
           <SLOAnalytics chapter={selectedChapter} mcqs={currentMCQs} />
         )}
 
-        {activeTab === 'export' && (
+        {isAdmin && activeTab === 'export' && (
           <CSVExportModal chapter={selectedChapter} mcqs={currentMCQs} />
         )}
 
@@ -121,5 +133,13 @@ export default function App() {
       </footer>
 
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <MainAppContent />
+    </AuthProvider>
   );
 }

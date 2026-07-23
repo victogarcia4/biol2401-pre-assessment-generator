@@ -1,7 +1,8 @@
 import React from 'react';
-import { BookOpen, FileSpreadsheet, ClipboardList, BarChart3, Sparkles, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { BookOpen, FileSpreadsheet, ClipboardList, BarChart3, Sparkles, ChevronDown, Lock, LogOut, ShieldCheck } from 'lucide-react';
 import { CHAPTERS } from '../data/chapters';
 import { ChapterMeta } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 interface HeaderProps {
   selectedChapter: ChapterMeta;
@@ -16,6 +17,8 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab
 }) => {
+  const { isAdmin, setIsLoginModalOpen, logout } = useAuth();
+
   return (
     <header className="border-b border-white/10 bg-[#0d1322]/80 backdrop-blur-md sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
@@ -43,10 +46,10 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Chapter Dropdown & Instructor Badge */}
+          {/* Chapter Dropdown, Instructor Badge & Auth Controls */}
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             {/* Chapter Selector */}
-            <div className="relative flex-1 md:w-80">
+            <div className="relative flex-1 md:w-72">
               <select
                 value={selectedChapter.id}
                 onChange={(e) => {
@@ -79,6 +82,30 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="text-xs font-bold text-zinc-200">Dr. Victor Garcia M.</span>
               </div>
             </div>
+
+            {/* Admin Authentication Action Button */}
+            {!isAdmin ? (
+              <button
+                onClick={() => setIsLoginModalOpen(true)}
+                className="flex items-center gap-2 bg-[#162032] hover:bg-cyan-500/10 border border-cyan-500/40 hover:border-cyan-400 text-cyan-300 text-xs font-bold font-mono px-3.5 py-2 rounded-lg transition shrink-0 shadow-sm"
+                title="Acceso restringido para el profesor"
+              >
+                <Lock className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Admin Access</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 bg-emerald-950/60 border border-emerald-500/40 px-3 py-1.5 rounded-lg shrink-0">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-mono font-bold text-emerald-300">Admin Mode</span>
+                <button
+                  onClick={logout}
+                  className="ml-1 p-1 hover:bg-white/10 rounded text-zinc-400 hover:text-white transition"
+                  title="Cerrar sesión de Administrador"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-rose-400" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -96,41 +123,50 @@ export const Header: React.FC<HeaderProps> = ({
             Pre-Assessment Mode (Quiz)
           </button>
 
-          <button
-            onClick={() => setActiveTab('bank')}
-            className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition flex items-center gap-2 ${
-              activeTab === 'bank'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-md shadow-cyan-500/20'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <BookOpen className="w-4 h-4" />
-            Question Bank ({selectedChapter.questionCount} MCQs)
-          </button>
+          {isAdmin ? (
+            <>
+              <button
+                onClick={() => setActiveTab('bank')}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition flex items-center gap-2 ${
+                  activeTab === 'bank'
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-md shadow-cyan-500/20'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <BookOpen className="w-4 h-4" />
+                Question Bank ({selectedChapter.questionCount} MCQs)
+              </button>
 
-          <button
-            onClick={() => setActiveTab('analytics')}
-            className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition flex items-center gap-2 ${
-              activeTab === 'analytics'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-md shadow-cyan-500/20'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4" />
-            SLO & HAPS Mapping
-          </button>
+              <button
+                onClick={() => setActiveTab('analytics')}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition flex items-center gap-2 ${
+                  activeTab === 'analytics'
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-md shadow-cyan-500/20'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                SLO & HAPS Mapping
+              </button>
 
-          <button
-            onClick={() => setActiveTab('export')}
-            className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition flex items-center gap-2 ml-auto ${
-              activeTab === 'export'
-                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold shadow-md shadow-emerald-500/20'
-                : 'text-emerald-400 hover:bg-emerald-500/10'
-            }`}
-          >
-            <FileSpreadsheet className="w-4 h-4" />
-            Export Chapter CSV
-          </button>
+              <button
+                onClick={() => setActiveTab('export')}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition flex items-center gap-2 ml-auto ${
+                  activeTab === 'export'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold shadow-md shadow-emerald-500/20'
+                    : 'text-emerald-400 hover:bg-emerald-500/10'
+                }`}
+              >
+                <FileSpreadsheet className="w-4 h-4" />
+                Export Chapter CSV
+              </button>
+            </>
+          ) : (
+            <div className="ml-auto px-3 py-1.5 text-[11px] font-mono text-zinc-500 flex items-center gap-1.5 select-none">
+              <Lock className="w-3 h-3 text-zinc-500" />
+              <span>Opciones adicionales restringidas a Admin</span>
+            </div>
+          )}
         </nav>
       </div>
     </header>
