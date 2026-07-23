@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MCQItem, ChapterMeta } from '../types';
-import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Award, BookOpen, Lightbulb, FileText, Download, UserCheck, AlertTriangle, User, Lock, Key, AlertCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Award, BookOpen, Lightbulb, FileText, Download, UserCheck, AlertTriangle, User, Lock, Key, AlertCircle, Shuffle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { exportQuizToPDF } from '../utils/QuizPDFExport';
 import { StudentIdentificationModal } from './StudentIdentificationModal';
 import { saveGradeRecord } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { shuffleExamQuestions } from '../utils/shuffleUtils';
 
 interface PreAssessmentQuizProps {
   chapter: ChapterMeta;
@@ -19,6 +20,22 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
   const [showExplanation, setShowExplanation] = useState<Record<number, boolean>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [studyMode, setStudyMode] = useState(true); // Immediate explanation mode
+
+  // Anti-cheat randomized questions and choices for active attempt
+  const [activeMCQs, setActiveMCQs] = useState<MCQItem[]>(() => {
+    return shuffleExamQuestions(mcqs);
+  });
+
+  // Re-shuffle when chapter or mcqs prop updates
+  useEffect(() => {
+    if (mcqs && mcqs.length > 0) {
+      setActiveMCQs(shuffleExamQuestions(mcqs));
+      setCurrentIndex(0);
+      setUserAnswers({});
+      setShowExplanation({});
+      setIsSubmitted(false);
+    }
+  }, [chapter.id, mcqs]);
 
   // Student Identification State
   const [studentProfile, setStudentProfile] = useState<{ firstName: string; lastName: string } | null>(() => {
@@ -48,7 +65,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
 
   const isExamUnlocked = isAdmin || Boolean(unlockedChapters[chapter.id]);
 
-  if (!mcqs || mcqs.length === 0) {
+  if (!mcqs || mcqs.length === 0 || !activeMCQs || activeMCQs.length === 0) {
     return (
       <div className="glass-card p-12 text-center rounded-2xl max-w-xl mx-auto my-12 border border-white/10">
         <BookOpen className="w-12 h-12 text-zinc-500 mx-auto mb-4" />
@@ -60,7 +77,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
     );
   }
 
-  const currentQ = mcqs[currentIndex];
+  const currentQ = activeMCQs[currentIndex];
   const selectedAnswer = userAnswers[currentIndex];
 
   const handleSelectOption = (letter: "A" | "B" | "C" | "D") => {
@@ -128,7 +145,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
     const sloStats: Record<string, { correct: number; total: number; title: string }> = {};
     const subjectStats: Record<string, { correct: number; total: number }> = {};
 
-    mcqs.forEach((q, idx) => {
+    activeMCQs.forEach((q, idx) => {
       const ans = userAnswers[idx];
       const isRight = ans === q.letterAnswer;
       if (isRight) correctCount++;
@@ -148,8 +165,8 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
       if (isRight) subjectStats[q.subject].correct++;
     });
 
-    const percentage = Math.round((correctCount / mcqs.length) * 100);
-    return { score: correctCount, total: mcqs.length, percentage, sloStats, subjectStats };
+    const percentage = Math.round((correctCount / activeMCQs.length) * 100);
+    return { score: correctCount, total: activeMCQs.length, percentage, sloStats, subjectStats };
   };
 
   const handleFinishQuiz = async () => {
@@ -179,6 +196,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
   };
 
   const handleRestart = () => {
+    setActiveMCQs(shuffleExamQuestions(mcqs));
     setUserAnswers({});
     setShowExplanation({});
     setCurrentIndex(0);
@@ -190,7 +208,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
   const handleExportPDF = () => {
     if (!scoreData || !studentProfile) return;
     const name = `${studentProfile.firstName} ${studentProfile.lastName}`;
-    exportQuizToPDF(chapter, mcqs, userAnswers, scoreData, name);
+    exportQuizToPDF(chapter, activeMCQs, userAnswers, scoreData, name);
   };
 
   return (
@@ -210,12 +228,16 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
       {/* Assessment Header & Settings */}
       <div className="glass-card p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded uppercase">
               {chapter.code} Assessment
             </span>
             <span className="text-[10px] font-mono text-zinc-400">
               Exam Target: {chapter.examName}
+            </span>
+            <span className="text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 light:text-indigo-800 px-2 py-0.5 rounded uppercase flex items-center gap-1">
+              <Shuffle className="w-3 h-3 text-indigo-400" />
+              Anti-Cheat Shuffled Attempt
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-white light:text-slate-900 mt-1">
@@ -262,7 +284,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
               </label>
 
               <span className="text-xs font-mono font-bold text-cyan-400 light:text-cyan-700 bg-cyan-950/60 light:bg-cyan-100 px-3 py-1.5 rounded-lg border border-cyan-500/30">
-                {Object.keys(userAnswers).length} / {mcqs.length}
+                {Object.keys(userAnswers).length} / {activeMCQs.length}
               </span>
             </div>
           )}
@@ -394,7 +416,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
           <div className="w-full bg-[#111827] light:bg-slate-200 h-2 rounded-full overflow-hidden border border-white/5 light:border-slate-300">
             <div
               className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full transition-all duration-300"
-              style={{ width: `${((currentIndex + 1) / mcqs.length) * 100}%` }}
+              style={{ width: `${((currentIndex + 1) / activeMCQs.length) * 100}%` }}
             />
           </div>
 
@@ -411,10 +433,14 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
             <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-white/10 light:border-slate-200">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold text-cyan-400 light:text-cyan-700 bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-1 rounded">
-                  Question {currentIndex + 1} of {mcqs.length}
+                  Question {currentIndex + 1} of {activeMCQs.length}
                 </span>
                 <span className="text-xs font-mono text-zinc-400 light:text-slate-600 bg-white/5 light:bg-slate-200 px-2.5 py-1 rounded">
                   SLO: {currentQ.slo}
+                </span>
+                <span className="text-[10px] font-mono text-indigo-400 light:text-indigo-700 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded flex items-center gap-1">
+                  <Shuffle className="w-3 h-3" />
+                  Randomized Choices
                 </span>
               </div>
               <span className="text-xs font-mono text-emerald-400 light:text-emerald-700 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20">
@@ -512,9 +538,9 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
               </button>
 
               <div className="flex items-center gap-3">
-                {currentIndex < mcqs.length - 1 ? (
+                {currentIndex < activeMCQs.length - 1 ? (
                   <button
-                    onClick={() => setCurrentIndex(prev => Math.min(mcqs.length - 1, prev + 1))}
+                    onClick={() => setCurrentIndex(prev => Math.min(activeMCQs.length - 1, prev + 1))}
                     className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-xs font-bold text-white shadow-lg shadow-cyan-500/20 flex items-center gap-2 transition cursor-pointer"
                   >
                     Next
@@ -592,7 +618,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                   className="px-5 py-2.5 rounded-xl bg-[#162032] light:bg-slate-100 hover:bg-white/10 text-xs font-bold text-zinc-200 light:text-slate-800 flex items-center gap-2 border border-white/10 light:border-slate-300 transition cursor-pointer"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  Retake Assessment
+                  Retake Assessment (Reshuffled)
                 </button>
               </div>
             </div>
@@ -687,7 +713,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
               </h4>
 
               <div className="space-y-6">
-                {mcqs.map((q, index) => {
+                {activeMCQs.map((q, index) => {
                   const userAns = userAnswers[index];
                   const isRight = userAns === q.letterAnswer;
 
