@@ -109,13 +109,13 @@ export default function App() {
           <div className="flex items-center gap-2">
             <img
               src="/vhgm pic foto.png"
-              alt="Dr. Víctor García"
+              alt="Dr. Victor Garcia M."
               className="w-5 h-5 rounded-full object-cover border border-cyan-400/40"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = "/dr-victor-garcia.png";
               }}
             />
-            <span className="text-zinc-400">Designed & Created by Dr. Víctor García Martínez</span>
+            <span className="text-zinc-400">Designed & Created by Dr. Victor Garcia M.</span>
           </div>
         </div>
       </footer>

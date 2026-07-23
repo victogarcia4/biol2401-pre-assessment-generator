@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="flex items-center gap-2 bg-[#162032] border border-white/10 px-3 py-1.5 rounded-lg shrink-0">
               <img
                 src="/vhgm pic foto.png"
-                alt="Dr. Víctor García"
+                alt="Dr. Victor Garcia M."
                 className="w-7 h-7 rounded-full object-cover border border-cyan-400/40"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/dr-victor-garcia.png";
@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
               />
               <div className="text-left">
                 <span className="block text-[10px] font-mono text-zinc-400 leading-none">Curated by</span>
-                <span className="text-xs font-bold text-zinc-200">Dr. Víctor García</span>
+                <span className="text-xs font-bold text-zinc-200">Dr. Victor Garcia M.</span>
               </div>
             </div>
           </div>
