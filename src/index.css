@@ -9,30 +9,179 @@
   }
 }
 
-html.light body {
-  background-color: #f8fafc;
-  color: #0f172a;
+/* ==========================================================================
+   LIGHT MODE TOTAL OVERRIDES & HIGH CONTRAST TYPOGRAPHY
+   ========================================================================== */
+
+html.light {
+  color-scheme: light;
 }
+
+html.light body {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html.light header {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.light nav {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.light footer {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+html.light .glass-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  color: #0f172a !important;
+}
+
+/* Contrast Typography in Light Mode */
+html.light h1, 
+html.light h2, 
+html.light h3, 
+html.light h4, 
+html.light h5, 
+html.light h6 {
+  color: #0f172a !important;
+}
+
+/* Overriding dark text utilities when in light mode for maximum readability */
+html.light .text-white {
+  color: #0f172a !important;
+}
+
+html.light .text-zinc-100,
+html.light .text-zinc-200 {
+  color: #1e293b !important;
+}
+
+html.light .text-zinc-300 {
+  color: #334155 !important;
+}
+
+html.light .text-zinc-400 {
+  color: #475569 !important;
+}
+
+html.light .text-zinc-500 {
+  color: #64748b !important;
+}
+
+/* Light mode background overrides for dark-themed containers */
+html.light .bg-\[\#080c14\],
+html.light .bg-\[\#0b0f19\],
+html.light .bg-\[\#0d1322\],
+html.light .bg-\[\#0f172a\],
+html.light .bg-\[\#111827\],
+html.light .bg-\[\#121212\],
+html.light .bg-\[\#090d16\],
+html.light .bg-\[\#0d1527\] {
+  background-color: #ffffff !important;
+}
+
+html.light .bg-\[\#162032\],
+html.light .bg-\[\#1e293b\] {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html.light select,
+html.light input[type="text"],
+html.light input[type="password"] {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Border overrides */
+html.light .border-white\/10,
+html.light .border-white\/5,
+html.light .border-white\/20 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Colored accent badges & text in Light Mode for high contrast */
+html.light .text-cyan-400,
+html.light .text-cyan-300,
+html.light .text-cyan-200 {
+  color: #0284c7 !important;
+}
+
+html.light .bg-cyan-500\/10,
+html.light .bg-cyan-500\/20,
+html.light .bg-cyan-950\/40,
+html.light .bg-cyan-950\/60 {
+  background-color: #e0f2fe !important;
+  border-color: #7dd3fc !important;
+}
+
+html.light .text-emerald-400,
+html.light .text-emerald-300,
+html.light .text-emerald-200 {
+  color: #047857 !important;
+}
+
+html.light .bg-emerald-500\/10,
+html.light .bg-emerald-500\/20,
+html.light .bg-emerald-950\/80,
+html.light .bg-emerald-950\/40 {
+  background-color: #dcfce7 !important;
+  border-color: #86efac !important;
+}
+
+html.light .text-amber-400,
+html.light .text-amber-300 {
+  color: #b45309 !important;
+}
+
+html.light .bg-amber-500\/10,
+html.light .bg-amber-500\/20 {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+}
+
+html.light .text-rose-400,
+html.light .text-rose-300 {
+  color: #be123c !important;
+}
+
+html.light .bg-rose-500\/10,
+html.light .bg-rose-500\/20,
+html.light .bg-rose-950\/80 {
+  background-color: #ffe4e6 !important;
+  border-color: #fecdd3 !important;
+}
+
+/* ==========================================================================
+   COMMON UTILITIES & GLOWS
+   ========================================================================== */
 
 .glow-cyan {
   box-shadow: 0 0 25px -5px rgba(0, 240, 255, 0.25);
 }
+html.light .glow-cyan {
+  box-shadow: 0 4px 20px -2px rgba(2, 132, 199, 0.15);
+}
 
 .glow-emerald {
   box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
-}
-
-.glass-card {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-html.light .glass-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
 }
 
 .glass-card-hover {
