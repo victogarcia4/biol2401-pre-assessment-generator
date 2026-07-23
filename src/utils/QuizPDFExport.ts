@@ -12,9 +12,9 @@ export function exportQuizToPDF(
   mcqs: MCQItem[],
   userAnswers: Record<number, "A" | "B" | "C" | "D">,
   scoreData: ScoreData,
-  studentName: string = "Estudiante BIOL 2401"
+  studentName: string = "BIOL 2401 Student"
 ) {
-  const currentDate = new Date().toLocaleDateString('es-ES', {
+  const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -28,13 +28,13 @@ export function exportQuizToPDF(
     let colorClass = '';
 
     if (pct < 60) {
-      priorityTag = '🔴 Prioridad Alta (Énfasis Urgente en Clase)';
+      priorityTag = '🔴 High Priority (Urgent Class Focus)';
       colorClass = '#ef4444';
     } else if (pct < 80) {
-      priorityTag = '🟡 Prioridad Media (Repaso Breve)';
+      priorityTag = '🟡 Medium Priority (Brief Review)';
       colorClass = '#f59e0b';
     } else {
-      priorityTag = '🟢 Dominado (Baja Prioridad)';
+      priorityTag = '🟢 Mastered (Low Priority)';
       colorClass = '#10b981';
     }
 
@@ -53,7 +53,7 @@ export function exportQuizToPDF(
     const userAns = userAnswers[index];
     const isCorrect = userAns === q.letterAnswer;
     const statusColor = isCorrect ? '#059669' : '#dc2626';
-    const statusText = isCorrect ? '✓ Correcta' : '✗ Incorrecta';
+    const statusText = isCorrect ? '✓ Correct Answer' : '✗ Incorrect Answer';
 
     const optionsHtml = (['A', 'B', 'C', 'D'] as const).map(letter => {
       const isSelected = userAns === letter;
@@ -65,14 +65,14 @@ export function exportQuizToPDF(
       if (isRight) {
         optBg = '#ecfdf5';
         optBorder = '#10b981';
-        badge = '<span style="color: #047857; font-weight: bold; font-size: 11px; margin-left: 8px;">(Respuesta Correcta)</span>';
+        badge = '<span style="color: #047857; font-weight: bold; font-size: 11px; margin-left: 8px;">(Correct Answer)</span>';
       }
       if (isSelected && !isRight) {
         optBg = '#fef2f2';
         optBorder = '#ef4444';
-        badge = '<span style="color: #b91c1c; font-weight: bold; font-size: 11px; margin-left: 8px;">(Tu Selección)</span>';
+        badge = '<span style="color: #b91c1c; font-weight: bold; font-size: 11px; margin-left: 8px;">(Your Selection)</span>';
       } else if (isSelected && isRight) {
-        badge = '<span style="color: #047857; font-weight: bold; font-size: 11px; margin-left: 8px;">(Tu Selección ✓)</span>';
+        badge = '<span style="color: #047857; font-weight: bold; font-size: 11px; margin-left: 8px;">(Your Selection ✓)</span>';
       }
 
       const optionText = letter === 'A' ? q.optionA : letter === 'B' ? q.optionB : letter === 'C' ? q.optionC : q.optionD;
@@ -88,7 +88,7 @@ export function exportQuizToPDF(
       <div style="page-break-inside: avoid; margin-bottom: 24px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; background-color: #ffffff;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
           <div>
-            <span style="font-weight: bold; font-size: 14px; color: #1e293b;">Pregunta ${index + 1} de ${mcqs.length}</span>
+            <span style="font-weight: bold; font-size: 14px; color: #1e293b;">Question ${index + 1} of ${mcqs.length}</span>
             <span style="background-color: #e0f2fe; color: #0369a1; font-family: monospace; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold;">
               ${q.slo}
             </span>
@@ -96,7 +96,7 @@ export function exportQuizToPDF(
           <span style="font-weight: bold; font-size: 13px; color: ${statusColor};">${statusText}</span>
         </div>
 
-        <p style="font-size: 13.5px; color: #0f172a; margin-top: 0; margin-bottom: 12px; font-weight: 500; leading: 1.4;">
+        <p style="font-size: 13.5px; color: #0f172a; margin-top: 0; margin-bottom: 12px; font-weight: 500; line-height: 1.4;">
           ${q.question}
         </p>
 
@@ -106,7 +106,7 @@ export function exportQuizToPDF(
 
         <div style="background-color: #f8fafc; border-left: 4px solid #0284c7; padding: 10px 14px; border-radius: 0 6px 6px 0;">
           <div style="font-weight: bold; font-size: 11.5px; color: #0369a1; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
-            💡 Rationale / Explicación Pedagógica:
+            💡 Pedagogical Rationale:
           </div>
           <div style="font-size: 12px; color: #334155; line-height: 1.5;">
             ${q.explanation}
@@ -118,10 +118,10 @@ export function exportQuizToPDF(
 
   const htmlContent = `
     <!DOCTYPE html>
-    <html lang="es">
+    <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <title>BIOL 2401 Examen Pre-Clase - ${chapter.code}</title>
+      <title>BIOL 2401 Pre-Class Assessment - ${chapter.code}</title>
       <style>
         @page {
           size: A4;
@@ -192,7 +192,7 @@ export function exportQuizToPDF(
       <div class="header">
         <div>
           <h1 class="title">BIOL 2401 Human Anatomy & Physiology I</h1>
-          <p class="subtitle">Evaluación Pre-Clase con Rationales • Dr. Víctor García M.</p>
+          <p class="subtitle">Pre-Class Assessment with Rationales • Dr. Victor Garcia M.</p>
         </div>
         <div style="text-align: right;">
           <div style="font-weight: bold; font-size: 14px;">${chapter.code}: ${chapter.title}</div>
@@ -202,25 +202,25 @@ export function exportQuizToPDF(
 
       <div class="score-card">
         <div>
-          <div style="font-size: 12px; color: #0369a1; font-weight: bold; text-transform: uppercase;">Reporte de Examen Estudiante</div>
+          <div style="font-size: 12px; color: #0369a1; font-weight: bold; text-transform: uppercase;">Student Exam Report</div>
           <div style="font-size: 15px; font-weight: bold; color: #0f172a; margin-top: 2px;">${studentName}</div>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Calificación Obtenida</div>
+          <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Final Grade</div>
           <div class="score-value">${scoreData.score} / ${scoreData.total} (${scoreData.percentage}%)</div>
         </div>
       </div>
 
       <h2 style="font-size: 16px; border-left: 4px solid #0284c7; padding-left: 10px; color: #0f172a; margin-bottom: 12px;">
-        Priorización de Outcomes (SLOs) para Enfoque en Clase
+        Learning Outcome (SLO) Priority Breakdown for Lecture Focus
       </h2>
       <table>
         <thead>
           <tr>
             <th>SLO Code</th>
-            <th>Descripción del Outcome de Aprendizaje</th>
-            <th style="text-align: center;">Precisión</th>
-            <th>Nivel de Prioridad en Clase</th>
+            <th>Learning Outcome Description</th>
+            <th style="text-align: center;">Accuracy</th>
+            <th>Class Priority Level</th>
           </tr>
         </thead>
         <tbody>
@@ -229,13 +229,13 @@ export function exportQuizToPDF(
       </table>
 
       <h2 style="font-size: 16px; border-left: 4px solid #0284c7; padding-left: 10px; color: #0f172a; margin-top: 30px; margin-bottom: 16px;">
-        Desglose de las 15 Preguntas y Rationales Explicativos
+        Detailed 15 MCQ Questions & Pedagogical Rationales
       </h2>
 
       ${questionsHtml}
 
-      <div style="margin-top: 30px; border-t: 1px solid #e2e8f0; padding-top: 12px; text-align: center; font-size: 11px; color: #94a3b8;">
-        Documento generado automáticamente por BIOL 2401 Pre-Assessment Generator • Dr. Víctor García M.
+      <div style="margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 12px; text-align: center; font-size: 11px; color: #94a3b8;">
+        Document generated automatically by BIOL 2401 Pre-Assessment Generator • Dr. Victor Garcia M.
       </div>
 
       <script>

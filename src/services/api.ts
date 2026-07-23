@@ -84,20 +84,20 @@ export function exportGradesToCSV(records: GradeRecord[]): void {
   if (!records || records.length === 0) return;
 
   const headers = [
-    'ID Registro',
-    'Fecha',
-    'Capítulo',
-    'Código Capítulo',
-    'Nombre Estudiante',
-    'Apellido Estudiante',
-    'Nombre Completo',
-    'Aciertos',
-    'Total Preguntas',
-    'Porcentaje (%)'
+    'Record ID',
+    'Timestamp',
+    'Chapter Title',
+    'Chapter Code',
+    'First Name',
+    'Last Name',
+    'Full Name',
+    'Correct Count',
+    'Total Questions',
+    'Grade (%)'
   ];
 
   const rows = records.map(r => {
-    const dateFormatted = new Date(r.date).toLocaleString('es-ES');
+    const dateFormatted = new Date(r.date).toLocaleString('en-US');
     return [
       `"${r.id}"`,
       `"${dateFormatted}"`,

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MCQItem, ChapterMeta } from '../types';
-import { CheckCircle2, XCircle, HelpCircle, ArrowRight, ArrowLeft, RotateCcw, Award, BookOpen, Lightbulb, FileText, Download, UserCheck, AlertTriangle, User } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Award, BookOpen, Lightbulb, FileText, Download, UserCheck, AlertTriangle, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { exportQuizToPDF } from '../utils/QuizPDFExport';
 import { StudentIdentificationModal } from './StudentIdentificationModal';
@@ -168,14 +168,14 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
             <div className="flex items-center gap-2 bg-[#162032] light:bg-slate-100 border border-cyan-500/30 px-3 py-1.5 rounded-xl">
               <UserCheck className="w-4 h-4 text-cyan-400" />
               <div className="text-left font-mono">
-                <span className="block text-[10px] text-zinc-400 light:text-slate-500 leading-none">Alumno:</span>
+                <span className="block text-[10px] text-zinc-400 light:text-slate-500 leading-none">Student:</span>
                 <span className="text-xs font-bold text-white light:text-slate-900">{studentProfile.firstName} {studentProfile.lastName}</span>
               </div>
               <button
                 onClick={() => setIsIdModalOpen(true)}
-                className="ml-2 text-[10px] text-cyan-400 hover:underline font-mono"
+                className="ml-2 text-[10px] text-cyan-400 hover:underline font-mono cursor-pointer"
               >
-                (Cambiar)
+                (Change)
               </button>
             </div>
           ) : (
@@ -184,7 +184,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
               className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-mono text-xs font-bold px-3.5 py-2 rounded-xl shadow-md transition cursor-pointer"
             >
               <User className="w-4 h-4" />
-              <span>Ingresar Nombre *</span>
+              <span>Enter Student Name *</span>
             </button>
           )}
 
@@ -394,9 +394,9 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                 <div className="flex items-center justify-between text-xs font-mono text-cyan-300 light:text-cyan-800">
                   <span className="flex items-center gap-2 font-bold">
                     <UserCheck className="w-4 h-4 text-cyan-400" />
-                    <span>Estudiante: {studentProfile?.firstName} {studentProfile?.lastName}</span>
+                    <span>Student: {studentProfile?.firstName} {studentProfile?.lastName}</span>
                   </span>
-                  <span className="text-emerald-400 light:text-emerald-700 font-bold">✓ Guardado en Servidor</span>
+                  <span className="text-emerald-400 light:text-emerald-700 font-bold">✓ Saved to Server</span>
                 </div>
                 
                 <button
@@ -404,7 +404,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Guardar Examen en PDF con Rationales</span>
+                  <span>Download Assessment PDF with Rationales</span>
                 </button>
               </div>
 
@@ -414,7 +414,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                   className="px-5 py-2.5 rounded-xl bg-[#162032] light:bg-slate-100 hover:bg-white/10 text-xs font-bold text-zinc-200 light:text-slate-800 flex items-center gap-2 border border-white/10 light:border-slate-300 transition cursor-pointer"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  Reiniciar Examen
+                  Retake Assessment
                 </button>
               </div>
             </div>
@@ -425,22 +425,22 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                 <div>
                   <h4 className="text-lg font-bold text-white light:text-slate-900 flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-amber-400" />
-                    Priorización de SLOs para la Clase (Énfasis Recomendado)
+                    SLO Priority Emphasis for Class Instruction
                   </h4>
                   <p className="text-xs text-zinc-400 light:text-slate-600 mt-0.5">
-                    Ordenado por prioridad de enseñanza según tu porcentaje de aciertos en esta evaluación.
+                    Sorted by instructional priority based on your accuracy score in this assessment.
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3 text-[10px] font-mono shrink-0 pt-2 sm:pt-0">
                   <span className="flex items-center gap-1 text-rose-400 light:text-rose-600">
-                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" /> 🔴 Alta (&lt;60%)
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" /> 🔴 High Priority (&lt;60%)
                   </span>
                   <span className="flex items-center gap-1 text-amber-400 light:text-amber-600">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" /> 🟡 Media (60-79%)
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" /> 🟡 Medium Priority (60-79%)
                   </span>
                   <span className="flex items-center gap-1 text-emerald-400 light:text-emerald-600">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> 🟢 Dominado (≥80%)
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> 🟢 Mastered (≥80%)
                   </span>
                 </div>
               </div>
@@ -449,16 +449,16 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                 {Object.entries(scoreData.sloStats)
                   .map(([sloCode, stat]) => {
                     const pct = Math.round((stat.correct / stat.total) * 100);
-                    let priorityLabel = '🟢 Dominado (Baja Prioridad)';
+                    let priorityLabel = '🟢 Mastered (Low Priority)';
                     let barBg = 'bg-emerald-500';
                     let badgeBg = 'bg-emerald-500/10 text-emerald-400 light:text-emerald-700 border-emerald-500/30';
 
                     if (pct < 60) {
-                      priorityLabel = '🔴 Prioridad Alta (Énfasis Urgente en Clase)';
+                      priorityLabel = '🔴 High Priority (Urgent Class Focus)';
                       barBg = 'bg-rose-500';
                       badgeBg = 'bg-rose-500/10 text-rose-400 light:text-rose-700 border-rose-500/30';
                     } else if (pct < 80) {
-                      priorityLabel = '🟡 Prioridad Media (Repaso Breve)';
+                      priorityLabel = '🟡 Medium Priority (Brief Review)';
                       barBg = 'bg-amber-500';
                       badgeBg = 'bg-amber-500/10 text-amber-400 light:text-amber-700 border-amber-500/30';
                     }
@@ -483,7 +483,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
 
                         <div className="text-right font-mono shrink-0">
                           <span className="text-base font-extrabold text-white light:text-slate-900">{pct}%</span>
-                          <span className="text-xs text-zinc-500 light:text-slate-500 block">({stat.correct} de {stat.total} Aciertos)</span>
+                          <span className="text-xs text-zinc-500 light:text-slate-500 block">({stat.correct} of {stat.total} Correct)</span>
                         </div>
                       </div>
 
@@ -505,7 +505,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
             <div className="glass-card p-6 sm:p-8 rounded-2xl space-y-6 border border-white/10 light:border-slate-200">
               <h4 className="text-lg font-bold text-white light:text-slate-900 flex items-center gap-2 pb-2 border-b border-white/10 light:border-slate-200">
                 <FileText className="w-5 h-5 text-cyan-400" />
-                Revisión Detallada de Preguntas y Rationales
+                Detailed Question & Rationale Review
               </h4>
 
               <div className="space-y-6">
@@ -518,7 +518,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                       <div className="flex items-center justify-between gap-2 border-b border-white/5 light:border-slate-200 pb-3">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-mono font-bold text-cyan-400 light:text-cyan-700 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
-                            Pregunta {index + 1}
+                            Question {index + 1}
                           </span>
                           <span className="text-xs font-mono text-zinc-400 light:text-slate-600 bg-white/5 light:bg-slate-200 px-2 py-0.5 rounded">
                             {q.slo}
@@ -529,7 +529,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                             ? 'bg-emerald-500/10 text-emerald-400 light:text-emerald-700 border-emerald-500/30'
                             : 'bg-rose-500/10 text-rose-400 light:text-rose-700 border-rose-500/30'
                         }`}>
-                          {isRight ? '✓ Respuesta Correcta' : '✗ Respuesta Incorrecta'}
+                          {isRight ? '✓ Correct Answer' : '✗ Incorrect Answer'}
                         </span>
                       </div>
 
@@ -553,7 +553,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                           return (
                             <div key={letter} className={`p-2.5 rounded-lg border flex items-center justify-between ${style}`}>
                               <span><strong>{letter})</strong> {optText}</span>
-                              {isUserChoice && <span className="text-[10px] font-mono uppercase bg-white/10 light:bg-slate-200 px-1.5 py-0.5 rounded">Tu Elección</span>}
+                              {isUserChoice && <span className="text-[10px] font-mono uppercase bg-white/10 light:bg-slate-200 px-1.5 py-0.5 rounded">Your Selection</span>}
                             </div>
                           );
                         })}
@@ -562,7 +562,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                       <div className="p-3.5 rounded-lg bg-cyan-950/30 light:bg-cyan-50 border border-cyan-500/20 text-xs text-cyan-200 light:text-cyan-900 space-y-1">
                         <div className="flex items-center gap-1.5 font-bold text-cyan-300 light:text-cyan-800">
                           <Lightbulb className="w-3.5 h-3.5 text-cyan-400 light:text-cyan-600" />
-                          <span>Rationale Pedagógico:</span>
+                          <span>Pedagogical Rationale:</span>
                         </div>
                         <p className="text-zinc-300 light:text-slate-700 leading-relaxed font-light">
                           {q.explanation}

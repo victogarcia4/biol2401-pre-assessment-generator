@@ -74,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={toggleTheme}
               className="p-2.5 rounded-lg bg-[#162032] light:bg-slate-100 hover:bg-white/10 light:hover:bg-slate-200 border border-white/10 light:border-slate-300 text-cyan-400 light:text-cyan-700 transition shrink-0 cursor-pointer"
-              title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400" />
@@ -104,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => setIsLoginModalOpen(true)}
                 className="flex items-center gap-2 bg-[#162032] light:bg-slate-100 hover:bg-cyan-500/10 border border-cyan-500/40 hover:border-cyan-400 text-cyan-300 light:text-cyan-700 text-xs font-bold font-mono px-3.5 py-2 rounded-lg transition shrink-0 shadow-sm cursor-pointer"
-                title="Acceso restringido para el profesor"
+                title="Restricted Administrator Access"
               >
                 <Lock className="w-3.5 h-3.5 text-cyan-400" />
                 <span>Admin Access</span>
@@ -116,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   onClick={logout}
                   className="ml-1 p-1 hover:bg-white/10 rounded text-zinc-400 hover:text-white transition cursor-pointer"
-                  title="Cerrar sesión de Administrador"
+                  title="Log Out Admin Session"
                 >
                   <LogOut className="w-3.5 h-3.5 text-rose-400" />
                 </button>
@@ -192,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({
           ) : (
             <div className="ml-auto px-3 py-1.5 text-[11px] font-mono text-zinc-500 light:text-slate-500 flex items-center gap-1.5 select-none">
               <Lock className="w-3 h-3 text-zinc-500" />
-              <span>Opciones adicionales restringidas a Admin</span>
+              <span>Additional options restricted to Admin</span>
             </div>
           )}
         </nav>
