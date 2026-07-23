@@ -34,3 +34,19 @@ export interface QuizResult {
   sloBreakdown: Record<string, { correct: number; total: number; title: string }>;
   subjectBreakdown: Record<string, { correct: number; total: number }>;
 }
+
+export interface GradeRecord {
+  id: string;
+  firstName: string;
+  lastName: string;
+  studentName: string;
+  chapterId: number;
+  chapterCode: string;
+  chapterTitle: string;
+  score: number;
+  total: number;
+  percentage: number;
+  date: string;
+  userAnswers: Record<number, "A" | "B" | "C" | "D">;
+  sloStats: Record<string, { correct: number; total: number; title: string }>;
+}

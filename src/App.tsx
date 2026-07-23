@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { PreAssessmentQuiz } from './components/PreAssessmentQuiz';
+import { GroupAnalyticsDashboard } from './components/GroupAnalyticsDashboard';
 import { QuestionBankTable } from './components/QuestionBankTable';
 import { SLOAnalytics } from './components/SLOAnalytics';
 import { CSVExportModal } from './components/CSVExportModal';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { CHAPTERS } from './data/chapters';
 import { CHAPTER_1_MCQS } from './data/chapter1';
 import { CHAPTER_2_MCQS } from './data/chapter2';
@@ -24,7 +26,7 @@ import { ChapterMeta, MCQItem } from './types';
 function MainAppContent() {
   const { isAdmin } = useAuth();
   const [selectedChapter, setSelectedChapter] = useState<ChapterMeta>(CHAPTERS[0]);
-  const [activeTab, setActiveTab] = useState<'quiz' | 'bank' | 'analytics' | 'export'>('quiz');
+  const [activeTab, setActiveTab] = useState<'quiz' | 'group' | 'bank' | 'analytics' | 'export'>('quiz');
 
   // Enforce student restrictions: non-admin users can ONLY view the quiz tab
   useEffect(() => {
@@ -49,7 +51,7 @@ function MainAppContent() {
     selectedChapter.id === 12 ? CHAPTER_12_MCQS : [];
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-zinc-100 flex flex-col font-sans selection:bg-[#00f0ff]/30 selection:text-white">
+    <div className="min-h-screen bg-[#080c14] light:bg-slate-50 text-zinc-100 light:text-slate-900 flex flex-col font-sans selection:bg-[#00f0ff]/30 selection:text-white transition-colors duration-300">
       
       {/* Admin Login Modal */}
       <AdminLoginModal />
@@ -66,28 +68,28 @@ function MainAppContent() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* Chapter Overview Banner */}
-        <div className="glass-card p-6 rounded-2xl border border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-[#0d1527] to-[#0f1b33]">
+        <div className="glass-card p-6 rounded-2xl border border-white/10 light:border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-[#0d1527] to-[#0f1b33] light:from-slate-100 light:to-slate-200">
           <div className="space-y-1 max-w-3xl">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded uppercase">
+              <span className="text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 light:text-cyan-800 px-2 py-0.5 rounded uppercase">
                 {selectedChapter.code} Overview
               </span>
-              <span className="text-[10px] font-mono text-zinc-400">
+              <span className="text-[10px] font-mono text-zinc-400 light:text-slate-600">
                 Syllabus Mapping: {selectedChapter.examName}
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-white light:text-slate-900 tracking-tight">
               {selectedChapter.title}
             </h2>
-            <p className="text-xs sm:text-sm text-zinc-300 font-light leading-relaxed">
+            <p className="text-xs sm:text-sm text-zinc-300 light:text-slate-700 font-light leading-relaxed">
               {selectedChapter.description}
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
             <div className="text-right font-mono hidden sm:block">
-              <span className="block text-[10px] text-zinc-400 uppercase font-bold">Bank Status</span>
-              <span className="text-xs font-bold text-emerald-400">
+              <span className="block text-[10px] text-zinc-400 light:text-slate-500 uppercase font-bold">Bank Status</span>
+              <span className="text-xs font-bold text-emerald-400 light:text-emerald-700">
                 {selectedChapter.hasData ? `${selectedChapter.questionCount} MCQs Mapped` : 'Pending'}
               </span>
             </div>
@@ -97,6 +99,10 @@ function MainAppContent() {
         {/* Tab Modules */}
         {activeTab === 'quiz' && (
           <PreAssessmentQuiz chapter={selectedChapter} mcqs={currentMCQs} />
+        )}
+
+        {isAdmin && activeTab === 'group' && (
+          <GroupAnalyticsDashboard selectedChapter={selectedChapter} />
         )}
 
         {isAdmin && activeTab === 'bank' && (
@@ -114,7 +120,7 @@ function MainAppContent() {
       </main>
 
       {/* Class Footer */}
-      <footer className="border-t border-white/10 bg-[#090d16] py-6 mt-12 text-xs font-mono text-zinc-500">
+      <footer className="border-t border-white/10 light:border-slate-200 bg-[#090d16] light:bg-white py-6 mt-12 text-xs font-mono text-zinc-500 light:text-slate-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 Pre-Assessment Generator • BIOL 2401 Human Anatomy & Physiology I</p>
           
@@ -127,7 +133,7 @@ function MainAppContent() {
                 (e.target as HTMLImageElement).src = "/dr-victor-garcia.png";
               }}
             />
-            <span className="text-zinc-400">Designed & Created by Dr. Victor Garcia M.</span>
+            <span className="text-zinc-400 light:text-slate-700">Designed & Created by Dr. Victor Garcia M.</span>
           </div>
         </div>
       </footer>
@@ -138,8 +144,10 @@ function MainAppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainAppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <MainAppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
