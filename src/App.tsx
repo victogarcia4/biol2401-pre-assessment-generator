@@ -14,6 +14,9 @@ import { CHAPTER_6_MCQS } from './data/chapter6';
 import { CHAPTER_7_MCQS } from './data/chapter7';
 import { CHAPTER_8_MCQS } from './data/chapter8';
 import { CHAPTER_9_MCQS } from './data/chapter9';
+import { CHAPTER_10_MCQS } from './data/chapter10';
+import { CHAPTER_11_MCQS } from './data/chapter11';
+import { CHAPTER_12_MCQS } from './data/chapter12';
 import { ChapterMeta, MCQItem } from './types';
 import { Heart, Sparkles, BookOpen, Layers } from 'lucide-react';
 
@@ -31,7 +34,10 @@ export default function App() {
     selectedChapter.id === 6 ? CHAPTER_6_MCQS :
     selectedChapter.id === 7 ? CHAPTER_7_MCQS :
     selectedChapter.id === 8 ? CHAPTER_8_MCQS :
-    selectedChapter.id === 9 ? CHAPTER_9_MCQS : [];
+    selectedChapter.id === 9 ? CHAPTER_9_MCQS :
+    selectedChapter.id === 10 ? CHAPTER_10_MCQS :
+    selectedChapter.id === 11 ? CHAPTER_11_MCQS :
+    selectedChapter.id === 12 ? CHAPTER_12_MCQS : [];
 
   return (
     <div className="min-h-screen bg-[#080c14] text-zinc-100 flex flex-col font-sans selection:bg-[#00f0ff]/30 selection:text-white">

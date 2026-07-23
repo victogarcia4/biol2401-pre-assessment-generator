@@ -108,7 +108,7 @@ export const CHAPTERS: ChapterMeta[] = [
     examName: 'Lecture Exam 3',
     questionCount: 15,
     csvFileName: 'Chapter_10_MCQs.csv',
-    hasData: false,
+    hasData: true,
     subjects: ['G - Nervous System & Action Potentials']
   },
   {
@@ -119,7 +119,7 @@ export const CHAPTERS: ChapterMeta[] = [
     examName: 'Lecture Exam 4',
     questionCount: 15,
     csvFileName: 'Chapter_11_MCQs.csv',
-    hasData: false,
+    hasData: true,
     subjects: ['G - Nervous System & Action Potentials']
   },
   {
@@ -130,7 +130,7 @@ export const CHAPTERS: ChapterMeta[] = [
     examName: 'Lecture Exam 4',
     questionCount: 15,
     csvFileName: 'Chapter_12_MCQs.csv',
-    hasData: false,
+    hasData: true,
     subjects: ['G - Nervous System & Action Potentials']
   }
 ];
