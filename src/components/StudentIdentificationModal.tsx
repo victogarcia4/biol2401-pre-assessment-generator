@@ -5,11 +5,15 @@ import { motion, AnimatePresence } from 'motion/react';
 interface StudentIdentificationModalProps {
   isOpen: boolean;
   onIdentify: (firstName: string, lastName: string) => void;
+  onClose?: () => void;
+  canClose?: boolean;
 }
 
 export const StudentIdentificationModal: React.FC<StudentIdentificationModalProps> = ({
   isOpen,
-  onIdentify
+  onIdentify,
+  onClose,
+  canClose = false
 }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -23,12 +27,12 @@ export const StudentIdentificationModal: React.FC<StudentIdentificationModalProp
     const cleanLast = lastName.trim();
 
     if (!cleanFirst || !cleanLast) {
-      setError('You must enter both your First Name and Last Name to start the assessment.');
+      setError('You must enter both your First Name and Last Name to unlock and access exams.');
       return;
     }
 
     if (cleanFirst.length < 2 || cleanLast.length < 2) {
-      setError('Please enter a valid first name and last name.');
+      setError('Please enter a valid first name and last name (at least 2 characters each).');
       return;
     }
 
@@ -38,13 +42,23 @@ export const StudentIdentificationModal: React.FC<StudentIdentificationModalProp
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="relative w-full max-w-lg bg-[#0f172a] light:bg-white border border-cyan-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl text-white light:text-slate-900"
+          className="relative w-full max-w-lg bg-[#0f172a] light:bg-white border border-cyan-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl text-white light:text-slate-900 glow-cyan"
         >
+          {canClose && onClose && (
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white p-1 rounded-lg transition"
+              title="Close Modal"
+            >
+              ✕
+            </button>
+          )}
+
           {/* Header */}
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 p-0.5 shadow-lg shadow-cyan-500/20 shrink-0">
@@ -55,17 +69,20 @@ export const StudentIdentificationModal: React.FC<StudentIdentificationModalProp
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-cyan-500/20 text-cyan-300 light:text-cyan-800 px-2 py-0.5 rounded">
-                  Required Registration
+                  🔒 Restricted Access
+                </span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-amber-500/20 text-amber-300 light:text-amber-800 px-2 py-0.5 rounded">
+                  Student Registration Required
                 </span>
               </div>
               <h3 className="text-xl font-extrabold tracking-tight text-white light:text-slate-900 mt-0.5">
-                Student Identification
+                Student Identification & Exam Unlock
               </h3>
             </div>
           </div>
 
-          <p className="text-xs sm:text-sm text-zinc-300 light:text-slate-600 mb-6 leading-relaxed">
-            Welcome to the **BIOL 2401** pre-class assessment. Please enter your First Name and Last Name to register your attendance and record your scores.
+          <p className="text-xs sm:text-sm text-zinc-300 light:text-slate-600 mb-6 leading-relaxed bg-[#162032] light:bg-slate-50 p-3.5 rounded-xl border border-white/10 light:border-slate-200">
+            Exam access is strictly restricted to students. You cannot open or view any chapter pre-assessment exam until you register your First Name and Last Name.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -122,7 +139,7 @@ export const StudentIdentificationModal: React.FC<StudentIdentificationModalProp
                 type="submit"
                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm uppercase tracking-wider shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 transition cursor-pointer"
               >
-                <span>Start Assessment</span>
+                <span>Register & Unlock Exam</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

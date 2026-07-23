@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MCQItem, ChapterMeta } from '../types';
-import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Award, BookOpen, Lightbulb, FileText, Download, UserCheck, AlertTriangle, User } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Award, BookOpen, Lightbulb, FileText, Download, UserCheck, AlertTriangle, User, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { exportQuizToPDF } from '../utils/QuizPDFExport';
 import { StudentIdentificationModal } from './StudentIdentificationModal';
@@ -144,6 +144,8 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
       <StudentIdentificationModal
         isOpen={isIdModalOpen}
         onIdentify={handleIdentifyStudent}
+        onClose={() => setIsIdModalOpen(false)}
+        canClose={Boolean(studentProfile)}
       />
 
       {/* Assessment Header & Settings */}
@@ -209,7 +211,44 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
       </div>
 
       {/* Main Content Area */}
-      {!isSubmitted ? (
+      {!studentProfile ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="glass-card p-8 sm:p-12 rounded-2xl text-center space-y-6 border border-cyan-500/40 glow-cyan max-w-2xl mx-auto my-6"
+        >
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 p-0.5 mx-auto shadow-lg shadow-cyan-500/30">
+            <div className="w-full h-full bg-[#0b0f19] light:bg-white rounded-[14px] flex items-center justify-center">
+              <Lock className="w-8 h-8 text-cyan-400" />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-cyan-500/20 text-cyan-300 light:text-cyan-800 px-2 py-0.5 rounded">
+                🔒 Restricted Exam Access
+              </span>
+            </div>
+            <h3 className="text-2xl font-extrabold text-white light:text-slate-900">
+              Student Registration Required
+            </h3>
+            <p className="text-zinc-300 light:text-slate-600 text-sm mt-2 leading-relaxed max-w-lg mx-auto">
+              Access to BIOL 2401 pre-assessment exams is restricted to students. You must register your <strong>First Name</strong> and <strong>Last Name</strong> before opening or viewing exam questions.
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={() => setIsIdModalOpen(true)}
+              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-bold uppercase tracking-wider shadow-lg shadow-cyan-500/25 inline-flex items-center gap-2.5 transition cursor-pointer"
+            >
+              <User className="w-4 h-4" />
+              <span>Register Name to Unlock Exam</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </motion.div>
+      ) : !isSubmitted ? (
         <div className="space-y-6">
           
           {/* Question Stepper Progress Bar */}

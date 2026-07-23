@@ -1,5 +1,5 @@
-import React from 'react';
-import { BookOpen, FileSpreadsheet, ClipboardList, BarChart3, Sparkles, ChevronDown, Lock, LogOut, ShieldCheck, Sun, Moon, Users } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BookOpen, FileSpreadsheet, ClipboardList, BarChart3, Sparkles, ChevronDown, Lock, LogOut, ShieldCheck, Sun, Moon, Users, User, UserCheck } from 'lucide-react';
 import { CHAPTERS } from '../data/chapters';
 import { ChapterMeta } from '../types';
 import { useAuth } from '../context/AuthContext';
@@ -20,6 +20,30 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { isAdmin, setIsLoginModalOpen, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+
+  const [studentProfile, setStudentProfile] = useState<{ firstName: string; lastName: string } | null>(() => {
+    try {
+      const saved = localStorage.getItem('biol2401_student_profile');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return null;
+  });
+
+  useEffect(() => {
+    const syncProfile = () => {
+      try {
+        const saved = localStorage.getItem('biol2401_student_profile');
+        if (saved) setStudentProfile(JSON.parse(saved));
+        else setStudentProfile(null);
+      } catch {}
+    };
+    window.addEventListener('storage', syncProfile);
+    const interval = setInterval(syncProfile, 1000);
+    return () => {
+      window.removeEventListener('storage', syncProfile);
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <header className="border-b border-white/10 light:border-slate-200 bg-[#0d1322]/80 light:bg-white/90 backdrop-blur-md sticky top-0 z-40">
@@ -98,6 +122,27 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="text-xs font-bold text-zinc-200 light:text-slate-800">Dr. Victor Garcia M.</span>
               </div>
             </div>
+
+            {/* Student Profile Status Indicator */}
+            {!isAdmin && (
+              studentProfile ? (
+                <div className="flex items-center gap-2 bg-[#162032] light:bg-slate-100 border border-cyan-500/40 px-3 py-1 rounded-lg shrink-0 font-mono">
+                  <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
+                  <div className="text-left">
+                    <span className="block text-[9px] text-zinc-400 light:text-slate-500 leading-none">Student</span>
+                    <span className="text-xs font-bold text-white light:text-slate-900">{studentProfile.firstName} {studentProfile.lastName}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 bg-amber-950/40 light:bg-amber-50 border border-amber-500/40 px-3 py-1 rounded-lg shrink-0 font-mono">
+                  <User className="w-3.5 h-3.5 text-amber-400" />
+                  <div className="text-left">
+                    <span className="block text-[9px] text-amber-400/80 light:text-amber-800 leading-none">Student</span>
+                    <span className="text-xs font-bold text-amber-300 light:text-amber-900">Registration Required 🔒</span>
+                  </div>
+                </div>
+              )
+            )}
 
             {/* Admin Authentication Action Button */}
             {!isAdmin ? (
