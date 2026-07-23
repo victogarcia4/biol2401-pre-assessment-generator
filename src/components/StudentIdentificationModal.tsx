@@ -64,12 +64,12 @@ export const StudentIdentificationModal: React.FC<StudentIdentificationModalProp
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md p-4 sm:p-6 flex items-start sm:items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="relative w-full max-w-lg bg-[#0f172a] light:bg-white border border-cyan-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl text-white light:text-slate-900 glow-cyan"
+          className="relative w-full max-w-lg bg-[#0f172a] light:bg-white border border-cyan-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl text-white light:text-slate-900 glow-cyan my-auto"
         >
           {canClose && onClose && (
             <button

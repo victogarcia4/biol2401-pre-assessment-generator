@@ -21,12 +21,12 @@ export const AdminPasscodeModal: React.FC<AdminPasscodeModalProps> = ({ isOpen, 
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md p-4 sm:p-6 flex items-start sm:items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="relative w-full max-w-4xl bg-[#0f172a] light:bg-white border border-amber-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl text-white light:text-slate-900 overflow-hidden flex flex-col max-h-[90vh]"
+          className="relative w-full max-w-4xl bg-[#0f172a] light:bg-white border border-amber-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl text-white light:text-slate-900 overflow-hidden flex flex-col max-h-[85vh] my-auto"
         >
           {/* Top Decorative Amber Ribbon */}
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600" />

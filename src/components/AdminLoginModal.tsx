@@ -34,12 +34,12 @@ export const AdminLoginModal: React.FC = () => {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm p-4 sm:p-6 flex items-start sm:items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className="relative w-full max-w-md bg-[#0f172a] light:bg-white border border-cyan-500/30 light:border-slate-300 rounded-2xl p-6 sm:p-8 shadow-2xl text-white light:text-slate-900"
+          className="relative w-full max-w-md bg-[#0f172a] light:bg-white border border-cyan-500/30 light:border-slate-300 rounded-2xl p-6 sm:p-8 shadow-2xl text-white light:text-slate-900 my-auto"
         >
           {/* Close button */}
           <button
