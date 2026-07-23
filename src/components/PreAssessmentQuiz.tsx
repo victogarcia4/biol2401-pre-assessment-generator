@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { MCQItem, ChapterMeta } from '../types';
-import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Award, BookOpen, Lightbulb, FileText, Download, UserCheck, AlertTriangle, User, Lock } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Award, BookOpen, Lightbulb, FileText, Download, UserCheck, AlertTriangle, User, Lock, Key, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { exportQuizToPDF } from '../utils/QuizPDFExport';
 import { StudentIdentificationModal } from './StudentIdentificationModal';
 import { saveGradeRecord } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 interface PreAssessmentQuizProps {
   chapter: ChapterMeta;
@@ -12,6 +13,7 @@ interface PreAssessmentQuizProps {
 }
 
 export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, mcqs }) => {
+  const { isAdmin } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, "A" | "B" | "C" | "D">>({});
   const [showExplanation, setShowExplanation] = useState<Record<number, boolean>>({});
@@ -26,7 +28,25 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
     } catch {}
     return null;
   });
+
+  // Unlocked Exams per Chapter
+  const [unlockedChapters, setUnlockedChapters] = useState<Record<number, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('biol2401_unlocked_chapters');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {};
+  });
+
   const [isIdModalOpen, setIsIdModalOpen] = useState(false);
+
+  // Inline locked card state
+  const [inlineFirstName, setInlineFirstName] = useState(studentProfile?.firstName || '');
+  const [inlineLastName, setInlineLastName] = useState(studentProfile?.lastName || '');
+  const [inlinePasscode, setInlinePasscode] = useState('');
+  const [inlineError, setInlineError] = useState('');
+
+  const isExamUnlocked = isAdmin || Boolean(unlockedChapters[chapter.id]);
 
   if (!mcqs || mcqs.length === 0) {
     return (
@@ -44,13 +64,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
   const selectedAnswer = userAnswers[currentIndex];
 
   const handleSelectOption = (letter: "A" | "B" | "C" | "D") => {
-    if (isSubmitted) return;
-
-    // Mandatory student identification before taking exam
-    if (!studentProfile) {
-      setIsIdModalOpen(true);
-      return;
-    }
+    if (isSubmitted || !isExamUnlocked) return;
 
     setUserAnswers(prev => ({ ...prev, [currentIndex]: letter }));
     if (studyMode) {
@@ -58,13 +72,55 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
     }
   };
 
-  const handleIdentifyStudent = (firstName: string, lastName: string) => {
+  const handleIdentifyStudent = (firstName: string, lastName: string, passcode: string): boolean => {
+    if (passcode.trim().toLowerCase() !== chapter.passcode.toLowerCase()) {
+      return false;
+    }
+
     const profile = { firstName, lastName };
     setStudentProfile(profile);
     try {
       localStorage.setItem('biol2401_student_profile', JSON.stringify(profile));
     } catch {}
+
+    setUnlockedChapters(prev => {
+      const updated = { ...prev, [chapter.id]: true };
+      try {
+        localStorage.setItem('biol2401_unlocked_chapters', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
     setIsIdModalOpen(false);
+    setInlineError('');
+    return true;
+  };
+
+  const handleInlineSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const first = inlineFirstName.trim();
+    const last = inlineLastName.trim();
+    const pass = inlinePasscode.trim();
+
+    if (!first || !last) {
+      setInlineError('You must enter both First Name and Last Name.');
+      return;
+    }
+
+    if (!pass) {
+      setInlineError(`Please enter the access keyword for Exam ${chapter.id} (${chapter.code}).`);
+      return;
+    }
+
+    if (pass.toLowerCase() !== chapter.passcode.toLowerCase()) {
+      setInlineError(`Invalid access keyword for Exam ${chapter.id} (${chapter.code}). Please ask your instructor for the passcode.`);
+      return;
+    }
+
+    const success = handleIdentifyStudent(first, last, pass);
+    if (!success) {
+      setInlineError(`Invalid access keyword for Exam ${chapter.id} (${chapter.code}).`);
+    }
   };
 
   const calculateScore = () => {
@@ -97,7 +153,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
   };
 
   const handleFinishQuiz = async () => {
-    if (!studentProfile) {
+    if (!studentProfile || !isExamUnlocked) {
       setIsIdModalOpen(true);
       return;
     }
@@ -140,12 +196,15 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
   return (
     <div className="space-y-6">
       
-      {/* Student Identification Modal */}
+      {/* Student Identification & Exam Passcode Modal */}
       <StudentIdentificationModal
         isOpen={isIdModalOpen}
+        chapter={chapter}
+        initialFirstName={studentProfile?.firstName || ''}
+        initialLastName={studentProfile?.lastName || ''}
         onIdentify={handleIdentifyStudent}
         onClose={() => setIsIdModalOpen(false)}
-        canClose={Boolean(studentProfile)}
+        canClose={Boolean(studentProfile && isExamUnlocked)}
       />
 
       {/* Assessment Header & Settings */}
@@ -160,11 +219,11 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-white light:text-slate-900 mt-1">
-            {chapter.title}
+            Exam {chapter.id}: {chapter.title}
           </h2>
         </div>
 
-        {/* Student Profile Indicator */}
+        {/* Student Profile & Unlock Indicator */}
         <div className="flex flex-wrap items-center gap-3 self-stretch sm:self-auto justify-between sm:justify-start">
           {studentProfile ? (
             <div className="flex items-center gap-2 bg-[#162032] light:bg-slate-100 border border-cyan-500/30 px-3 py-1.5 rounded-xl">
@@ -186,11 +245,11 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
               className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-mono text-xs font-bold px-3.5 py-2 rounded-xl shadow-md transition cursor-pointer"
             >
               <User className="w-4 h-4" />
-              <span>Enter Student Name *</span>
+              <span>Register Student *</span>
             </button>
           )}
 
-          {!isSubmitted && (
+          {isExamUnlocked && !isSubmitted && (
             <div className="flex items-center gap-3">
               <label className="flex items-center gap-2 text-xs text-zinc-300 light:text-slate-700 cursor-pointer bg-[#162032] light:bg-slate-100 px-3 py-1.5 rounded-lg border border-white/10 light:border-slate-300">
                 <input
@@ -211,42 +270,122 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
       </div>
 
       {/* Main Content Area */}
-      {!studentProfile ? (
+      {!isExamUnlocked ? (
+        /* Locked Exam Registration Card */
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="glass-card p-8 sm:p-12 rounded-2xl text-center space-y-6 border border-cyan-500/40 glow-cyan max-w-2xl mx-auto my-6"
+          className="glass-card p-6 sm:p-10 rounded-2xl border border-amber-500/40 glow-cyan max-w-2xl mx-auto my-6 space-y-6"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 p-0.5 mx-auto shadow-lg shadow-cyan-500/30">
-            <div className="w-full h-full bg-[#0b0f19] light:bg-white rounded-[14px] flex items-center justify-center">
-              <Lock className="w-8 h-8 text-cyan-400" />
+          <div className="flex items-center gap-4 border-b border-white/10 light:border-slate-200 pb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 p-0.5 shadow-lg shadow-amber-500/30 shrink-0">
+              <div className="w-full h-full bg-[#0b0f19] light:bg-white rounded-[14px] flex items-center justify-center">
+                <Lock className="w-7 h-7 text-amber-400" />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-amber-500/20 text-amber-300 light:text-amber-800 px-2 py-0.5 rounded">
+                  🔒 Restricted Exam Access
+                </span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-white light:text-slate-900">
+                Student Registration & Keyword Required
+              </h3>
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-cyan-500/20 text-cyan-300 light:text-cyan-800 px-2 py-0.5 rounded">
-                🔒 Restricted Exam Access
-              </span>
-            </div>
-            <h3 className="text-2xl font-extrabold text-white light:text-slate-900">
-              Student Registration Required
-            </h3>
-            <p className="text-zinc-300 light:text-slate-600 text-sm mt-2 leading-relaxed max-w-lg mx-auto">
-              Access to BIOL 2401 pre-assessment exams is restricted to students. You must register your <strong>First Name</strong> and <strong>Last Name</strong> before opening or viewing exam questions.
+          {/* Nominal Exam Details Banner */}
+          <div className="bg-[#162032] light:bg-slate-50 p-4 rounded-xl border border-cyan-500/30 space-y-1">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 light:text-cyan-700 font-bold block">
+              Nominal Exam Target ({chapter.examName}):
+            </span>
+            <h4 className="text-base font-bold text-white light:text-slate-900">
+              Exam {chapter.id}: {chapter.code} - {chapter.title}
+            </h4>
+            <p className="text-xs text-zinc-400 light:text-slate-600 font-light pt-1">
+              {chapter.description}
             </p>
           </div>
 
-          <div className="pt-2">
-            <button
-              onClick={() => setIsIdModalOpen(true)}
-              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-bold uppercase tracking-wider shadow-lg shadow-cyan-500/25 inline-flex items-center gap-2.5 transition cursor-pointer"
-            >
-              <User className="w-4 h-4" />
-              <span>Register Name to Unlock Exam</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+          <form onSubmit={handleInlineSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-mono font-bold uppercase tracking-wider text-zinc-400 light:text-slate-600 mb-1.5">
+                  First Name <span className="text-rose-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={inlineFirstName}
+                  onChange={(e) => {
+                    setInlineFirstName(e.target.value);
+                    setInlineError('');
+                  }}
+                  placeholder="e.g. Victor"
+                  required
+                  className="w-full bg-[#1e293b] light:bg-slate-100 border border-white/10 light:border-slate-300 rounded-xl px-4 py-3 text-white light:text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono font-bold uppercase tracking-wider text-zinc-400 light:text-slate-600 mb-1.5">
+                  Last Name <span className="text-rose-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={inlineLastName}
+                  onChange={(e) => {
+                    setInlineLastName(e.target.value);
+                    setInlineError('');
+                  }}
+                  placeholder="e.g. Garcia"
+                  required
+                  className="w-full bg-[#1e293b] light:bg-slate-100 border border-white/10 light:border-slate-300 rounded-xl px-4 py-3 text-white light:text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-amber-400 light:text-amber-700 mb-1.5 flex items-center gap-1.5">
+                <Key className="w-4 h-4" />
+                <span>Exam {chapter.id} Access Keyword / Passcode <span className="text-rose-400">*</span></span>
+              </label>
+              <input
+                type="text"
+                value={inlinePasscode}
+                onChange={(e) => {
+                  setInlinePasscode(e.target.value);
+                  setInlineError('');
+                }}
+                placeholder={`Enter keyword for Exam ${chapter.id}...`}
+                required
+                className="w-full bg-[#1e293b] light:bg-slate-100 border border-amber-500/40 rounded-xl px-4 py-3 text-white light:text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+              />
+            </div>
+
+            {inlineError && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3.5 py-2.5 rounded-xl text-xs font-mono"
+              >
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{inlineError}</span>
+              </motion.div>
+            )}
+
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-sm uppercase tracking-wider shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2 transition cursor-pointer"
+              >
+                <Key className="w-4 h-4" />
+                <span>Unlock & Open Exam {chapter.id}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </form>
         </motion.div>
       ) : !isSubmitted ? (
         <div className="space-y-6">
@@ -415,7 +554,7 @@ export const PreAssessmentQuiz: React.FC<PreAssessmentQuizProps> = ({ chapter, m
                   Pre-Assessment Results
                 </h3>
                 <p className="text-zinc-400 light:text-slate-600 text-sm mt-1">
-                  {chapter.title} – BIOL 2401
+                  Exam {chapter.id}: {chapter.title} – BIOL 2401
                 </p>
               </div>
 

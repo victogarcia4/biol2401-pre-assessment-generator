@@ -24,6 +24,7 @@ export interface ChapterMeta {
   csvFileName: string;
   hasData: boolean;
   subjects: string[];
+  passcode: string;
 }
 
 export interface QuizResult {

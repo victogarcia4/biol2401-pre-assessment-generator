@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, FileSpreadsheet, ClipboardList, BarChart3, Sparkles, ChevronDown, Lock, LogOut, ShieldCheck, Sun, Moon, Users, User, UserCheck } from 'lucide-react';
+import { BookOpen, FileSpreadsheet, ClipboardList, BarChart3, Sparkles, ChevronDown, Lock, LogOut, ShieldCheck, Sun, Moon, Users, User, UserCheck, Key } from 'lucide-react';
 import { CHAPTERS } from '../data/chapters';
 import { ChapterMeta } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { AdminPasscodeModal } from './AdminPasscodeModal';
 
 interface HeaderProps {
   selectedChapter: ChapterMeta;
@@ -20,6 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { isAdmin, setIsLoginModalOpen, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const [isAdminPasscodeModalOpen, setIsAdminPasscodeModalOpen] = useState(false);
 
   const [studentProfile, setStudentProfile] = useState<{ firstName: string; lastName: string } | null>(() => {
     try {
@@ -155,20 +157,37 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>Admin Access</span>
               </button>
             ) : (
-              <div className="flex items-center gap-2 bg-emerald-950/60 light:bg-emerald-100 border border-emerald-500/40 px-3 py-1.5 rounded-lg shrink-0">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 light:text-emerald-700" />
-                <span className="text-xs font-mono font-bold text-emerald-300 light:text-emerald-800">Admin Mode</span>
+              <div className="flex items-center gap-2">
                 <button
-                  onClick={logout}
-                  className="ml-1 p-1 hover:bg-white/10 rounded text-zinc-400 hover:text-white transition cursor-pointer"
-                  title="Log Out Admin Session"
+                  onClick={() => setIsAdminPasscodeModalOpen(true)}
+                  className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs font-mono font-bold px-3 py-2 rounded-lg transition shrink-0 shadow-md cursor-pointer"
+                  title="Confidential Instructor Passcode Directory"
                 >
-                  <LogOut className="w-3.5 h-3.5 text-rose-400" />
+                  <Key className="w-3.5 h-3.5 text-amber-100" />
+                  <span>Secret Exam Keys</span>
                 </button>
+
+                <div className="flex items-center gap-2 bg-emerald-950/60 light:bg-emerald-100 border border-emerald-500/40 px-3 py-1.5 rounded-lg shrink-0">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 light:text-emerald-700" />
+                  <span className="text-xs font-mono font-bold text-emerald-300 light:text-emerald-800">Admin Mode</span>
+                  <button
+                    onClick={logout}
+                    className="ml-1 p-1 hover:bg-white/10 rounded text-zinc-400 hover:text-white transition cursor-pointer"
+                    title="Log Out Admin Session"
+                  >
+                    <LogOut className="w-3.5 h-3.5 text-rose-400" />
+                  </button>
+                </div>
               </div>
             )}
           </div>
         </div>
+
+        {/* Secret Admin Passcode Directory Modal */}
+        <AdminPasscodeModal
+          isOpen={isAdminPasscodeModalOpen}
+          onClose={() => setIsAdminPasscodeModalOpen(false)}
+        />
 
         {/* Navigation Tabs */}
         <nav className="flex flex-wrap items-center gap-1 bg-[#111827] light:bg-slate-100 p-1 rounded-xl border border-white/5 light:border-slate-200">

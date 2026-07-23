@@ -10,7 +10,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_01_MCQs.csv',
     hasData: true,
-    subjects: ['A - Body Plan & Organization', 'B - Homeostasis']
+    subjects: ['A - Body Plan & Organization', 'B - Homeostasis'],
+    passcode: 'Introduction01'
   },
   {
     id: 2,
@@ -21,7 +22,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_02_MCQs.csv',
     hasData: true,
-    subjects: ['C - Chemistry & Cell Biology']
+    subjects: ['C - Chemistry & Cell Biology'],
+    passcode: 'Chemistry02'
   },
   {
     id: 3,
@@ -32,7 +34,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_03_MCQs.csv',
     hasData: true,
-    subjects: ['C - Chemistry & Cell Biology']
+    subjects: ['C - Chemistry & Cell Biology'],
+    passcode: 'Cell03'
   },
   {
     id: 4,
@@ -43,7 +46,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_04_MCQs.csv',
     hasData: true,
-    subjects: ['C - Chemistry & Cell Biology']
+    subjects: ['C - Chemistry & Cell Biology'],
+    passcode: 'Catabolism04'
   },
   {
     id: 5,
@@ -54,7 +58,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_05_MCQs.csv',
     hasData: true,
-    subjects: ['D - Histology & Integumentary System']
+    subjects: ['D - Histology & Integumentary System'],
+    passcode: 'Epithelial05'
   },
   {
     id: 6,
@@ -65,7 +70,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_06_MCQs.csv',
     hasData: true,
-    subjects: ['D - Histology & Integumentary System']
+    subjects: ['D - Histology & Integumentary System'],
+    passcode: 'Melanin06'
   },
   {
     id: 7,
@@ -76,7 +82,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_07_MCQs.csv',
     hasData: true,
-    subjects: ['E - Skeletal System & Joints']
+    subjects: ['E - Skeletal System & Joints'],
+    passcode: 'Skeletal07'
   },
   {
     id: 8,
@@ -87,7 +94,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_08_MCQs.csv',
     hasData: true,
-    subjects: ['E - Skeletal System & Joints']
+    subjects: ['E - Skeletal System & Joints'],
+    passcode: 'Diarthrosis08'
   },
   {
     id: 9,
@@ -98,7 +106,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_09_MCQs.csv',
     hasData: true,
-    subjects: ['F - Muscular System & Contraction']
+    subjects: ['F - Muscular System & Contraction'],
+    passcode: 'Biceps09'
   },
   {
     id: 10,
@@ -109,7 +118,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_10_MCQs.csv',
     hasData: true,
-    subjects: ['G - Nervous System & Action Potentials']
+    subjects: ['G - Nervous System & Action Potentials'],
+    passcode: 'Neuron10'
   },
   {
     id: 11,
@@ -120,7 +130,8 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_11_MCQs.csv',
     hasData: true,
-    subjects: ['G - Nervous System & Action Potentials']
+    subjects: ['G - Nervous System & Action Potentials'],
+    passcode: 'Sympathetic11'
   },
   {
     id: 12,
@@ -131,6 +142,7 @@ export const CHAPTERS: ChapterMeta[] = [
     questionCount: 15,
     csvFileName: 'Chapter_12_MCQs.csv',
     hasData: true,
-    subjects: ['G - Nervous System & Action Potentials']
+    subjects: ['G - Nervous System & Action Potentials'],
+    passcode: 'Olfaction12'
   }
 ];
