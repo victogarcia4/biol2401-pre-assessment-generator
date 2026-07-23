@@ -49,7 +49,23 @@ async function startServer() {
     }
   });
 
-  // DELETE /api/grades
+  // DELETE /api/grades/:id (Delete specific exam entry)
+  app.delete('/api/grades/:id', (req, res) => {
+    try {
+      const { id } = req.params;
+      const content = fs.readFileSync(gradesFile, 'utf-8');
+      const grades = JSON.parse(content || '[]');
+
+      const updated = grades.filter((g: any) => g.id !== id);
+      fs.writeFileSync(gradesFile, JSON.stringify(updated, null, 2), 'utf-8');
+
+      res.json({ message: `Grade record ${id} deleted successfully` });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // DELETE /api/grades (Reset all grades)
   app.delete('/api/grades', (req, res) => {
     try {
       fs.writeFileSync(gradesFile, JSON.stringify([]), 'utf-8');

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GradeRecord, ChapterMeta } from '../types';
 import { CHAPTERS } from '../data/chapters';
-import { fetchGrades, clearAllGrades, exportGradesToCSV } from '../services/api';
+import { fetchGrades, clearAllGrades, deleteGradeRecord, exportGradesToCSV } from '../services/api';
 import { BarChart3, Users, Award, AlertTriangle, Download, Trash2, Search, Filter, BookOpen, RefreshCw } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -85,8 +85,15 @@ export const GroupAnalyticsDashboard: React.FC<GroupAnalyticsDashboardProps> = (
 
   const highPriorityCount = sortedGroupSLOs.filter(s => s.pct < 60).length;
 
+  const handleDeleteSingleRecord = async (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete the exam record for ${name}?`)) {
+      await deleteGradeRecord(id);
+      await loadData();
+    }
+  };
+
   const handleClearData = async () => {
-    if (window.confirm('Are you sure you want to clear the class grade database? This action cannot be undone.')) {
+    if (window.confirm('Are you sure you want to clear the entire class grade database? This action cannot be undone.')) {
       await clearAllGrades();
       await loadData();
     }
@@ -310,10 +317,10 @@ export const GroupAnalyticsDashboard: React.FC<GroupAnalyticsDashboardProps> = (
               <button
                 onClick={handleClearData}
                 className="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-mono font-bold flex items-center gap-1.5 transition shrink-0 cursor-pointer"
-                title="Reset grade database"
+                title="Reset entire grade database"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Reset Session Data</span>
+                <span>Reset All Data</span>
               </button>
             )}
           </div>
@@ -334,6 +341,7 @@ export const GroupAnalyticsDashboard: React.FC<GroupAnalyticsDashboardProps> = (
                   <th className="py-3 px-4 text-center">Grade</th>
                   <th className="py-3 px-4 text-center">Score</th>
                   <th className="py-3 px-4 text-right">Timestamp</th>
+                  <th className="py-3 px-4 text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 light:divide-slate-200">
@@ -378,6 +386,16 @@ export const GroupAnalyticsDashboard: React.FC<GroupAnalyticsDashboardProps> = (
                         hour: '2-digit',
                         minute: '2-digit'
                       })}
+                    </td>
+
+                    <td className="py-3 px-4 text-center">
+                      <button
+                        onClick={() => handleDeleteSingleRecord(r.id, `${r.firstName} ${r.lastName}`)}
+                        className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/30 transition cursor-pointer"
+                        title={`Erase exam record for ${r.firstName} ${r.lastName}`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </td>
                   </tr>
                 ))}

@@ -67,6 +67,24 @@ export async function saveGradeRecord(
   return newRecord;
 }
 
+export async function deleteGradeRecord(id: string): Promise<boolean> {
+  try {
+    await fetch(`${API_BASE}/grades/${id}`, { method: 'DELETE' });
+  } catch (err) {
+    console.warn('Backend API delete failed, deleting from local storage fallback:', err);
+  }
+
+  try {
+    const current: GradeRecord[] = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+    const updated = current.filter(r => r.id !== id);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+    return true;
+  } catch (e) {
+    console.error('Failed to delete grade record from local storage:', e);
+    return false;
+  }
+}
+
 export async function clearAllGrades(): Promise<boolean> {
   try {
     await fetch(`${API_BASE}/grades`, { method: 'DELETE' });
